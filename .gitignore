@@ -1,0 +1,39 @@
+# Rails
+rails-api/log/*
+rails-api/tmp/*
+rails-api/.env
+rails-api/.bundle/
+rails-api/vendor/bundle/
+rails-api/node_modules/
+rails-api/public/assets/
+rails-api/public/packs/
+rails-api/public/packs-test/
+rails-api/storage/*
+rails-api/.byebug_history
+rails-api/config/master.key
+
+# Python
+python-ai-service/venv/
+python-ai-service/.env
+python-ai-service/__pycache__/
+python-ai-service/**/__pycache__/
+python-ai-service/*.pyc
+python-ai-service/*.pyo
+python-ai-service/*.pyd
+python-ai-service/.Python
+python-ai-service/pip-log.txt
+python-ai-service/pip-delete-this-directory.txt
+python-ai-service/.pytest_cache/
+python-ai-service/.mypy_cache/
+python-ai-service/.coverage
+python-ai-service/htmlcov/
+
+# General
+.DS_Store
+*.log
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopify AI Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .examples {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .examples h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .example-btn {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .answer {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .meta-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .meta-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .meta-item span {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Shopify AI Analytics</h1>
+            <p>Ask natural language questions about your store data</p>
+        </div>
+
+        <div class="content">
+            <div id="status"></div>
+
+            <form id="questionForm">
+                <div class="form-group">
+                    <label for="storeId">Store ID</label>
+                    <input 
+                        type="text" 
+                        id="storeId" 
+                        value="example-store.myshopify.com" 
+                        placeholder="your-store.myshopify.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="question">Your Question</label>
+                    <textarea 
+                        id="question" 
+                        placeholder="e.g., What were my top 5 selling products last week?"
+                        required
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    Ask Question
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing your question...</p>
+            </div>
+
+            <div class="examples">
+                <h3>💡 Example Questions</h3>
+                <button class="example-btn" onclick="setExample('What were my top 5 selling products last week?')">
+                    Top 5 Products (Last Week)
+                </button>
+                <button class="example-btn" onclick="setExample('How much inventory should I reorder for next week?')">
+                    Inventory Reorder
+                </button>
+                <button class="example-btn" onclick="setExample('Which customers placed repeat orders in the last 90 days?')">
+                    Repeat Customers
+                </button>
+                <button class="example-btn" onclick="setExample('What products are likely to go out of stock in 7 days?')">
+                    Stockout Prediction
+                </button>
+                <button class="example-btn" onclick="setExample('How many units of Product X will I need next month?')">
+                    Product Projection
+                </button>
+            </div>
+
+            <div class="result" id="result">
+                <h3>📊 Answer</h3>
+                <div class="answer" id="answer"></div>
+                <div class="metadata" id="metadata"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/v1';
+
+        // Check API status on load
+        checkStatus();
+
+        async function checkStatus() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                showStatus('✅ Connected to API', 'success');
+            } catch (error) {
+                showStatus('⚠️ Cannot connect to API. Make sure Rails API is running on port 3000.', 'error');
+            }
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+        }
+
+        function setExample(question) {
+            document.getElementById('question').value = question;
+            document.getElementById('question').focus();
+        }
+
+        document.getElementById('questionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const storeId = document.getElementById('storeId').value;
+            const question = document.getElementById('question').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+
+            // Show loading
+            submitBtn.disabled = true;
+            loading.classList.add('show');
+            result.classList.remove('show');
+            showStatus('Processing your question...', 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/questions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        store_id: storeId,
+                        question: question
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResult(data);
+                    showStatus('✅ Question processed successfully', 'success');
+                } else {
+                    showStatus(`❌ Error: ${data.message || data.error}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Error: ${error.message}`, 'error');
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                loading.classList.remove('show');
+            }
+        });
+
+        function displayResult(data) {
+            const answerDiv = document.getElementById('answer');
+            const metadataDiv = document.getElementById('metadata');
+            const resultDiv = document.getElementById('result');
+
+            // Display answer
+            answerDiv.textContent = data.answer || 'No answer provided';
+
+            // Display metadata
+            metadataDiv.innerHTML = '';
+
+            if (data.confidence) {
+                const confidenceItem = document.createElement('div');
+                confidenceItem.className = 'meta-item';
+                confidenceItem.innerHTML = `
+                    <strong>Confidence</strong>
+                    <span>${data.confidence}</span>
+                `;
+                metadataDiv.appendChild(confidenceItem);
+            }
+
+            if (data.metadata) {
+                if (data.metadata.data_type) {
+                    const typeItem = document.createElement('div');
+                    typeItem.className = 'meta-item';
+                    typeItem.innerHTML = `
+                        <strong>Data Type</strong>
+                        <span>${data.metadata.data_type}</span>
+                    `;
+                    metadataDiv.appendChild(typeItem);
+                }
+
+                if (data.metadata.records_analyzed !== undefined) {
+                    const recordsItem = document.createElement('div');
+                    recordsItem.className = 'meta-item';
+                    recordsItem.innerHTML = `
+                        <strong>Records Analyzed</strong>
+                        <span>${data.metadata.records_analyzed}</span>
+                    `;
+                    metadataDiv.appendChild(recordsItem);
+                }
+
+                if (data.metadata.intent) {
+                    const intentItem = document.createElement('div');
+                    intentItem.className = 'meta-item';
+                    intentItem.innerHTML = `
+                        <strong>Intent</strong>
+                        <span>${data.metadata.intent.intent_type}</span>
+                    `;
+                    metadataDiv.appendChild(intentItem);
+
+                    if (data.metadata.intent.time_period) {
+                        const timeItem = document.createElement('div');
+                        timeItem.className = 'meta-item';
+                        timeItem.innerHTML = `
+                            <strong>Time Period</strong>
+                            <span>${data.metadata.intent.time_period}</span>
+                        `;
+                        metadataDiv.appendChild(timeItem);
+                    }
+                }
+            }
+
+            if (data.query_used) {
+                const queryItem = document.createElement('div');
+                queryItem.className = 'meta-item';
+                queryItem.style.gridColumn = '1 / -1';
+                queryItem.innerHTML = `
+                    <strong>Query Used</strong>
+                    <span style="font-family: monospace; font-size: 0.85em; word-break: break-all;">${data.query_used}</span>
+                `;
+                metadataDiv.appendChild(queryItem);
+            }
+
+            resultDiv.classList.add('show');
+        }
+    </script>
+</body>
+</html>
+

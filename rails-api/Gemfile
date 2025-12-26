@@ -1,0 +1,21 @@
+source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+
+gem 'rails', '~> 5.2'
+gem 'puma', '~> 4.3'
+gem 'rack-cors'
+gem 'httparty'
+gem 'jwt'
+gem 'dotenv-rails'
+
+# group :development, :test do
+#   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+#   gem 'rspec-rails'
+#   gem 'factory_bot_rails'
+# end
+
+group :development do
+  gem 'listen', '~> 3.3'
+  gem 'spring'
+end
+
